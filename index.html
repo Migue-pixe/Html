@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Tarefas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#28a745">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+    #app {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      background: #eee;
+      margin-top: 5px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h2>Lista de Tarefas</h2>
+    <input type="text" id="tarefaInput" placeholder="Digite uma nova tarefa...">
+    <button onclick="adicionarTarefa()">Adicionar</button>
+    <ul id="listaTarefas"></ul>
+  </div>
+
+  <script>
+    let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
+
+    function adicionarTarefa() {
+      const input = document.getElementById('tarefaInput');
+      const texto = input.value.trim();
+
+      if (texto !== "") {
+        tarefas.push({ texto: texto, concluida: false });
+        input.value = "";
+        salvarTarefas();
+        atualizarLista();
+      }
+    }
+
+    function atualizarLista() {
+      const ul = document.getElementById('listaTarefas');
+      ul.innerHTML = "";
+
+      tarefas.forEach((tarefa) => {
+        const li = document.createElement('li');
+        li.textContent = tarefa.texto;
+        ul.appendChild(li);
+      });
+    }
+
+    function salvarTarefas() {
+      localStorage.setItem("tarefas", JSON.stringify(tarefas));
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('Service Worker registrado.'))
+        .catch(erro => console.log('Erro no Service Worker:', erro));
+    }
+
+    atualizarLista();
+  </script>
+</body>
+</html>
